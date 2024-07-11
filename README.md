@@ -6,9 +6,7 @@ This project is part of a Python course. The goal is to create a cooking recipe 
 
 ## Features
 
-- Feature 1
-- Feature 2
-- Add more features as you develop them
+- Exercise 1: Set up project and added a sum-calculation script
 
 ## Installation
 
