@@ -18,13 +18,16 @@ for i in range(n):
   recipes_list.append(recipe)
 
 for recipe in recipes_list:
-  if recipe["cooking_time"] < 10 and len(recipe["ingredients"]) < 4:
+  ingredient_len = len(recipe["ingredients"]) 
+  cooking_time = recipe["cooking_time"]
+
+  if cooking_time < 10 and ingredient_len < 4:
     recipe["difficulty"] = "Easy"
-  elif recipe["cooking_time"] < 10 and len(recipe["ingredients"]) >= 4:
+  elif cooking_time < 10 and ingredient_len >= 4:
     recipe["difficulty"] = "Medium"
-  elif recipe["cooking_time"] >= 10 and len(recipe["ingredients"]) < 4:
+  elif cooking_time >= 10 and ingredient_len < 4:
     recipe["difficulty"] = "Intermediate"
-  else :
+  else:
     recipe["difficulty"] = "Hard"
 
 for recipe in recipes_list:
