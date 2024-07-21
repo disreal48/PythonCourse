@@ -12,7 +12,7 @@ def calc_difficulty(cooking_time, ingredient_len):
 
 def take_recipe():
     name = input("Enter the name of the recipe: ")
-    cooking_time = int(input("Enter the cooking time: "))
+    cooking_time = int(input("Enter the cooking time (in minutes): "))
     ingredients = input("Enter the ingredients separated by commas: ")
     ingredients = [ingredient.strip() for ingredient in ingredients.split(",")]
     ingredient_len = len(ingredients)

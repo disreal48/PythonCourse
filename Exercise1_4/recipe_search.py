@@ -9,18 +9,22 @@ def display_recipe(recipe):
     print(f"Difficulty: {recipe['difficulty']}")
 
 def search_ingredient(data):
-    for count, ingredient in enumerate(data["all_ingredients"]):
+    for count, ingredient in enumerate(data["all_ingredients"], 1):
       print(count, ingredient.strip())
 
     try:
         ingredient_index = int(input("Enter the number of the ingredient you would like to search for: "))
-        ingredient_searched = data["all_ingredients"][ingredient_index]
+        ingredient_searched = data["all_ingredients"][ingredient_index - 1]
+    except ValueError:
+        print("The input was not a number")
+    except IndexError:
+        print("The number was out of range")
     except:
-        print("The input was not correct")
+        print("Something horribly happened. Please contact the support.")
     else:
         for recipe in data["recipes_list"]:
             if ingredient_searched in recipe["ingredients"]:
-                print(recipe)
+                display_recipe(recipe)
 
 def main():
     file_name = input("Enter the file name: ")
