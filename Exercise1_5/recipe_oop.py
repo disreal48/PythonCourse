@@ -1,15 +1,14 @@
 class Recipe(object):
-  def __init__(self, name, ingredients, cooking_time):
+  def __init__(self, name):
     self.name = name
-    self.ingredients = ingredients
-    self.cooking_time = cooking_time
+    self.ingredients = []
+    self.cooking_time = 0
     self.difficulty = None
-    self.ingredient_len = len(ingredients)
+    self.ingredient_len = len(self.ingredients)
 
   all_ingredients = []  
 
   def calculate_difficulty(self):
-    ingredient_len = len(self.ingredients)
     if self.cooking_time < 10 and self.ingredient_len < 4:
         return "Easy"
     elif self.cooking_time < 10 and self.ingredient_len >= 4:
@@ -31,11 +30,11 @@ class Recipe(object):
   def set_cooking_time(self, cooking_time):
     self.cooking_time = cooking_time
 
-  def add_ingredient(self, ingredients):
-    self.ingredients.append(ingredients)
+  def add_ingredient(self, *ingredients):
+    self.ingredients.extend(ingredients)
     self.ingredient_len += len(ingredients)
     self.difficulty = self.calculate_difficulty()
-    self.update_all_ingredients(ingredients)
+    self.update_all_ingredients()
 
   def get_ingredients(self):
     return self.ingredients
@@ -47,25 +46,38 @@ class Recipe(object):
 
   def search_ingredient(self, ingredient):
     return ingredient in self.ingredients
-  
-  def update_all_ingredients(self, ingredients):
-    Recipe.all_ingredients.append(ingredients)
+
+  def update_all_ingredients(self):
+    for ingredient in self.ingredients:
+      if ingredient not in Recipe.all_ingredients:
+        Recipe.all_ingredients.append(ingredient)
 
   def __str__(self):
-    return f"Name: {self.name}\nCooking Time: {self.cooking_time} minutes\nIngredients: {self.ingredients}\nDifficulty: {self.get_difficulty()}"
+    return f"""Name: {self.name}
+Cooking Time: {self.cooking_time} minutes
+Ingredients: {', '.join(self.ingredients)}
+Difficulty: {self.get_difficulty()}"""
   
 def recipe_search(data, search_term):
   for recipe in data:
     if recipe.search_ingredient(search_term):
       print(recipe)
 
-tea = Recipe("Tea", ["Tea Leaves", "Sugar", "Water"], 5)
+tea = Recipe("Tea")
+tea.add_ingredient("Tea Leaves", "Sugar", "Water")
+tea.set_cooking_time(5)
 
 print(tea)
 
-coffee = Recipe("Coffee", ["Coffee Powder", "Sugar", "Water"], 5)
-cake = Recipe("Cake", ["Sugar", "Butter", "Eggs", "Vanilla Essence", "Flour", "Baking Powder", "Milk"], 50)
-banana_smoothie = Recipe("Banana Smoothie", ["Bananas", "Milk", "Peanut Butter", "Sugar", "Ice Cubes"], 5)
+coffee = Recipe("Coffee")
+coffee.add_ingredient("Coffee Powder", "Sugar", "Water")
+coffee.set_cooking_time(5)
+cake = Recipe("Cake")
+cake.add_ingredient("Sugar", "Butter", "Eggs", "Vanilla Essence", "Flour", "Baking Powder", "Milk")
+cake.set_cooking_time(50)
+banana_smoothie = Recipe("Banana Smoothie")
+banana_smoothie.add_ingredient("Bananas", "Milk", "Peanut Butter", "Sugar", "Ice Cubes")
+banana_smoothie.set_cooking_time(5)
 
 recipes_list = [tea, coffee, cake, banana_smoothie]
 
