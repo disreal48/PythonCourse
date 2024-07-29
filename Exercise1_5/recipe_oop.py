@@ -29,6 +29,7 @@ class Recipe(object):
 
   def set_cooking_time(self, cooking_time):
     self.cooking_time = cooking_time
+    self.difficulty = self.calculate_difficulty()
 
   def add_ingredient(self, *ingredients):
     self.ingredients.extend(ingredients)
