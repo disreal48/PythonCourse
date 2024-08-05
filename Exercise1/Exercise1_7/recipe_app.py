@@ -27,9 +27,7 @@ Ingredients: {self.ingredients}
 Difficulty: {self.difficulty}"""
     
     def return_ingredients_as_list(self):
-        if not self.ingredients:
-            return []
-        return self.ingredients.split(", ")
+        return self.ingredients.split(', ') if self.ingredients else []
     
     def calculate_difficulty(self):
       ingredients_len = len(self.return_ingredients_as_list())
@@ -46,15 +44,17 @@ Difficulty: {self.difficulty}"""
 Base.metadata.create_all(engine)
 
 def standardize_ingredients(ingredients):  
-  return ", ".join(ingredients)
+    return ", ".join(ingredients)
 
 def check_input_for_digit(string):
-  while True:
-    try:
-      var = int(input(string))
-      return var
-    except ValueError:
-      print("Please enter a valid number")
+    while True:
+        try:
+            var = int(input(string))
+            return var
+        except ValueError:
+            print("Please enter a valid number")
+
+
 
 def display_recipe(row):
     print("Recipe ID." + str(row[0]))
@@ -84,9 +84,9 @@ def create_recipe():
 
   ingredients = []
 
-  for i in range(igrendients_count):
+  for i in range(1, igrendients_count+1):
       while True:
-          ingredient = input(f"Enter ingredient {i+1}: ")
+          ingredient = input(f"Enter ingredient {i}: ")
           if 0 < len(ingredient) <= 50 and ingredient.isalpha():
                 ingredients.append(ingredient)
                 break
@@ -112,35 +112,27 @@ def create_recipe():
 
 #View Recipes
 def view_all_recipes():
-    if session.query(Recipe).count() == 0:
-        print("No recipes available.")
-        return
     recipes = session.query(Recipe).all()
     if not recipes:
         print("No recipes available.")
         return
     else:
-      for recipe in recipes:
-        print(recipe)
+        for recipe in recipes:
+            print(recipe)
 
 #Search Recipe by ingredient
 def search_by_ingredients():    
-    if session.query(Recipe).count() == 0:
+    results = session.query(Recipe.ingredients).all()
+    if not results:
         print("No recipes available.")
         return
-    else:
-      results = session.query(Recipe.ingredients).all()
 
     all_ingredients = set()
 
     for result in results:
         ingredients = result[0].split(", ")
         for ingredient in ingredients:
-            if ingredient not in all_ingredients:
-                all_ingredients.add(ingredient.strip())
-            else:
-                continue
-
+            all_ingredients.add(ingredient.strip())
 
     print("\nAll available ingredients:")
     for count, ingredient in enumerate(sorted(all_ingredients), start=1):
@@ -175,25 +167,24 @@ def search_by_ingredients():
 #Update Recipe
 def update_recipe():
     recipes = session.query(Recipe).all()
-
     if not recipes:
         print("No recipes available.")
         return
     
-    results = session.query(Recipe.id, Recipe.name).all()
+    results = session.query(Recipe.name, Recipe.ingredients, Recipe.cooking_time).all()
 
     print("\nAvailable Recipes:")
-    for result in results:
-        print(result)
+    for label, result in enumerate(results, 1):
+        print(label, result.name)
 
     while True:
         recipe_id = check_input_for_digit("Which Recipe do you want to update?: ")
-        if session.query(Recipe).filter(Recipe.id == recipe_id).first():
+        if recipe_id in range(1, len(results)+1):
             break
         else:
             print("Recipe not found. Enter a valid recipe ID.")
 
-    recipe_to_edit = session.query(Recipe).filter(Recipe.id == recipe_id).first()
+    recipe_to_edit = session.query(Recipe).filter(Recipe.name == results[recipe_id-1].name).first()
     print("Which Attribute do you want to update?")
     print(f"1. Name (Currently {recipe_to_edit.name})")
     print(f"2. Ingredients (Currently {recipe_to_edit.ingredients})")
@@ -227,6 +218,7 @@ def update_recipe():
               if 0 < len(updated_column) <= 255:
                   standardize_ingredients(updated_column)
                   recipe_to_edit.ingredients = updated_column
+                  recipe_to_edit.calculate_difficulty()
                   update_completed = True
                   break
               else:
